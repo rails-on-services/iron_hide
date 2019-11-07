@@ -94,6 +94,7 @@ module IronHide
     # representing attributes on the user or resource
     #
     def evaluate(expression, user, resource)
+      # binding.pry
       Array(expression).flat_map do |el|
         if expression?(el)
           cache.fetch(el) {

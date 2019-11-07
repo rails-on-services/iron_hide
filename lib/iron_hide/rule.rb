@@ -41,7 +41,7 @@ module IronHide
     def self.allow?(user, action, resource)
       find(user, action, resource).inject(false) do |rval, rule|
         # For an explicit DENY, stop evaluating, and return false
-        rval = false and break if rule.explicit_deny?
+        rval = false && break if rule.explicit_deny?
 
         # For an explicit ALLOW, true
         rval = true if rule.allow?
@@ -59,12 +59,12 @@ module IronHide
 
     # @return [Boolean]
     def allow?
-      effect == ALLOW && conditions.all? { |c| c.met?(user,resource) }
+      effect == ALLOW && conditions.all? { |c| c.met?(user, resource) }
     end
 
     # @return [Boolean]
     def explicit_deny?
-      effect == DENY && conditions.all? { |c| c.met?(user,resource) }
+      effect == DENY && conditions.all? { |c| c.met?(user, resource) }
     end
 
     alias_method :deny?, :explicit_deny?
