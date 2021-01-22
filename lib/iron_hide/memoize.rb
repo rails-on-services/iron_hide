@@ -1,5 +1,6 @@
-module IronHide
+# frozen_string_literal: true
 
+module IronHide
   # The SimpleCache does not expire cache entries
   # It is used only to memoize method calls during a single authorization
   # decision.
@@ -12,9 +13,9 @@ module IronHide
     end
 
     def fetch(expression)
-      cache.fetch(expression) {
+      cache.fetch(expression) do
         cache[expression] = yield
-      }
+      end
     end
   end
 

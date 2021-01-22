@@ -1,10 +1,12 @@
+# frozen_string_literal: true
+
 require 'set'
 
 module IronHide
   class Condition
     VALID_TYPES = {
-      'equal'=> :EqualCondition,
-      'not_equal'=> :NotEqualCondition
+      'equal' => :EqualCondition,
+      'not_equal' => :NotEqualCondition
     }.freeze
 
     # @param params [Hash] It has a single key, which is the conditional operator
@@ -21,14 +23,13 @@ module IronHide
     # @raise [IronHide::InvalidConditional] for too many keys
     #
     def self.new(params, cache = NullCache.new)
-      if params.length > 1
-        raise InvalidConditional, "Expected #{params} to have one key"
-      end
+      raise InvalidConditional, "Expected #{params} to have one key" if params.length > 1
+
       type, conditionals = params.first
       #=> :equal, { key: val, key: val }
       #
       # See: http://ruby-doc.org/core-1.9.3/Class.html#method-i-allocate
-      klass = VALID_TYPES.fetch(type){ raise InvalidConditional, "#{type} is not valid"}
+      klass = VALID_TYPES.fetch(type) { raise InvalidConditional, "#{type} is not valid" }
       cond  = IronHide.const_get(klass).allocate
       cond.send(:initialize, conditionals, cache)
       cond
@@ -96,20 +97,21 @@ module IronHide
     def evaluate(expression, user, resource)
       Array(expression).flat_map do |el|
         if expression?(el)
-          cache.fetch(el) {
-            type, *ary  = el.split('::')
-            if type == 'user'
+          cache.fetch(el) do
+            type, *ary = el.split('::')
+            case type
+            when 'user'
               Array(ary.inject(user) do |rval, attr|
                 rval.freeze.public_send(attr)
               end)
-            elsif type == 'resource'
+            when 'resource'
               Array(ary.inject(resource) do |rval, attr|
                 rval.freeze.public_send(attr)
               end)
             else
               raise "Expected #{type} to be 'resource' or 'user'"
             end
-          }
+          end
         else
           el
         end
@@ -122,7 +124,7 @@ module IronHide
 
     def with_error_handling
       yield
-    rescue => e
+    rescue StandardError => e
       new_exception = InvalidConditional.new(e.to_s)
       new_exception.set_backtrace(e.backtrace)
       raise new_exception
@@ -134,7 +136,7 @@ module IronHide
     def met?(user, resource)
       with_error_handling do
         conditionals.all? do |left, right|
-          (evaluate(left, user, resource) & evaluate(right, user, resource)).size > 0
+          (evaluate(left, user, resource) & evaluate(right, user, resource)).size.positive?
         end
       end
     end
@@ -145,7 +147,7 @@ module IronHide
     def met?(user, resource)
       with_error_handling do
         conditionals.all? do |left, right|
-          !((evaluate(left, user, resource) & evaluate(right, user, resource)).size > 0)
+          (evaluate(left, user, resource) & evaluate(right, user, resource)).size <= 0
         end
       end
     end

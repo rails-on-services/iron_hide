@@ -1,13 +1,13 @@
+# frozen_string_literal: true
+
 module IronHide
   class << self
-
     # @raise [IronHide::AuthorizationError] if authorization fails
     # @return [true] if authorization succeeds
     #
     def authorize!(user, action, resource)
-      unless can?(user, action, resource)
-        raise AuthorizationError
-      end
+      raise AuthorizationError unless can?(user, action, resource)
+
       true
     end
 
@@ -37,7 +37,7 @@ module IronHide
       @configuration ||= IronHide::Configuration.new
     end
 
-    alias_method :configure, :config
+    alias configure config
 
     # Resets storage
     # Useful primarily for testing
@@ -49,7 +49,7 @@ module IronHide
   end
 end
 
-require "iron_hide/version"
+require 'iron_hide/version'
 require 'iron_hide/errors'
 require 'iron_hide/rule'
 require 'iron_hide/condition'

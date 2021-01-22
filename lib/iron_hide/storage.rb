@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 # IronHide::Storage provides a common interface regardless of storage type
 #
 require 'multi_json'
@@ -5,10 +7,9 @@ require 'multi_json'
 module IronHide
   # @api private
   class Storage
-
     ADAPTERS = {
       file: :FileAdapter
-    }
+    }.freeze
 
     attr_reader :adapter
 
@@ -22,6 +23,5 @@ module IronHide
     end
   end
 end
-
 
 require 'iron_hide/storage/file_adapter'

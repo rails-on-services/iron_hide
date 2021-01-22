@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 module IronHide
   class Storage
     # @api private
@@ -11,8 +13,8 @@ module IronHide
         @rules = unfold(json)
       rescue MultiJson::ParseError => e
         raise IronHideError, "#{e.cause}: #{e.data}"
-      rescue => e
-        raise IronHideError, "Invalid or missing JSON file: #{e.to_s}"
+      rescue StandardError => e
+        raise IronHideError, "Invalid or missing JSON file: #{e}"
       end
 
       def where(opts = {})
@@ -31,10 +33,10 @@ module IronHide
       # @param json [Array<Hash>]
       # @return [Hash]
       def unfold(json)
-        json.inject(hash_of_hashes) do |rules, json_rule|
-          resource, actions = json_rule["resource"], json_rule["action"]
+        json.each_with_object(hash_of_hashes) do |json_rule, rules|
+          resource = json_rule['resource']
+          actions = json_rule['action']
           actions.each { |act| rules[resource][act] << json_rule }
-          rules
         end
       end
 
@@ -43,9 +45,9 @@ module IronHide
       # Return a Hash with default value that is a Hash with default value of Array
       # @return [Hash<Hash, Array>]
       def hash_of_hashes
-        Hash.new { |h1,k1|
-          h1[k1] = Hash.new { |h,k| h[k] = [] }
-        }
+        Hash.new do |h1, k1|
+          h1[k1] = Hash.new { |h, k| h[k] = [] }
+        end
       end
 
       # Implements an interface that makes selecting rules look like a Hash:

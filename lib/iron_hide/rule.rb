@@ -1,9 +1,11 @@
+# frozen_string_literal: true
+
 require 'iron_hide/memoize'
 
 module IronHide
   class Rule
-    ALLOW     = 'allow'.freeze
-    DENY      = 'deny'.freeze
+    ALLOW     = 'allow'
+    DENY      = 'deny'
 
     attr_reader :description, :effect, :conditions, :user, :resource, :cache
 
@@ -59,14 +61,14 @@ module IronHide
 
     # @return [Boolean]
     def allow?
-      effect == ALLOW && conditions.all? { |c| c.met?(user,resource) }
+      effect == ALLOW && conditions.all? { |c| c.met?(user, resource) }
     end
 
     # @return [Boolean]
     def explicit_deny?
-      effect == DENY && conditions.all? { |c| c.met?(user,resource) }
+      effect == DENY && conditions.all? { |c| c.met?(user, resource) }
     end
 
-    alias_method :deny?, :explicit_deny?
+    alias deny? explicit_deny?
   end
 end

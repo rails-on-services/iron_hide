@@ -1,8 +1,10 @@
+# frozen_string_literal: true
+
 require 'spec_helper'
 
 describe IronHide::Configuration do
-  describe "defaults" do
-    it "initializes with default configuration variables" do
+  describe 'defaults' do
+    it 'initializes with default configuration variables' do
       configuration = IronHide::Configuration.new
 
       expect(configuration.adapter).to eq :file
@@ -11,8 +13,8 @@ describe IronHide::Configuration do
     end
   end
 
-  describe "::add_configuration" do
-    it "creates an accessor and default values for additional configuration variables" do
+  describe '::add_configuration' do
+    it 'creates an accessor and default values for additional configuration variables' do
       configuration = IronHide::Configuration.new
 
       configuration.add_configuration(var1: :default1, var2: :default2, var3: nil)

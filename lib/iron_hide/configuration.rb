@@ -1,6 +1,7 @@
+# frozen_string_literal: true
+
 module IronHide
   class Configuration
-
     attr_accessor :adapter, :namespace, :json, :memoize
 
     def initialize
@@ -27,7 +28,7 @@ module IronHide
     #
     def add_configuration(config_hash)
       config_hash.each do |key, val|
-        instance_eval { instance_variable_set("@#{key}",val) }
+        instance_eval { instance_variable_set("@#{key}", val) }
         self.class.instance_eval { attr_accessor key }
       end
     end

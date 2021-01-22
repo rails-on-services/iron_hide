@@ -1,4 +1,5 @@
 #!/usr/bin/env ruby
+# frozen_string_literal: true
 
 require 'iron_hide'
 require 'multi_json'
@@ -10,7 +11,6 @@ User     = Class.new
 Resource = Class.new
 
 class BenchmarkTest
-
   attr_reader :num, :expensive, :cache
 
   # @param [Integer] num is the number of rules to benchmark with
@@ -27,7 +27,7 @@ class BenchmarkTest
     num       = @num
     expensive = @expensive
 
-    [ User, Resource ].each do |klass|
+    [User, Resource].each do |klass|
       klass.instance_eval do
         num.times do |n|
           # Dynamically create num attributes
@@ -49,12 +49,12 @@ class BenchmarkTest
     @rules = begin
       num.times.map do |n|
         {
-          :resource   => 'benchmark::Resource',
-          :action     => ['read'],
-          :effect     => 'allow',
-          :conditions => [
-            { :equal => { "user::expensive_attr" => ["1"] } },
-            { :equal => { "user::attr#{n}" => ["resource::attr#{n}"] } }
+          resource: 'benchmark::Resource',
+          action: ['read'],
+          effect: 'allow',
+          conditions: [
+            { equal: { 'user::expensive_attr' => ['1'] } },
+            { equal: { "user::attr#{n}" => ["resource::attr#{n}"] } }
           ]
         }
       end
@@ -74,22 +74,21 @@ class BenchmarkTest
     @resource = Resource.new
     @user     = User.new
     IronHide.can?(@user, :read, @resource)
-
   ensure
     @file.close
   end
 end
 
 ten                    = BenchmarkTest.new(10)
-ten_expensive_cache    = BenchmarkTest.new(10,true)
-ten_expensive_no_cache = BenchmarkTest.new(10,true, false)
+ten_expensive_cache    = BenchmarkTest.new(10, true)
+ten_expensive_no_cache = BenchmarkTest.new(10, true, false)
 thousand               = BenchmarkTest.new(1000)
 hundred_thousand       = BenchmarkTest.new(100_000)
 
 Benchmark.bm do |b|
-  b.report("10                      ") { ten.test}
-  b.report("10 - Expensive          ") { ten_expensive_cache.test}
-  b.report("10 - Expensive: No Cache") { ten_expensive_no_cache.test}
-  b.report("1000                    ") { thousand.test}
-  b.report("100_000                 ") { hundred_thousand.test}
+  b.report('10                      ') { ten.test }
+  b.report('10 - Expensive          ') { ten_expensive_cache.test }
+  b.report('10 - Expensive: No Cache') { ten_expensive_no_cache.test }
+  b.report('1000                    ') { thousand.test }
+  b.report('100_000                 ') { hundred_thousand.test }
 end
