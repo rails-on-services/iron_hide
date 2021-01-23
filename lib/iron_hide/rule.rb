@@ -25,7 +25,14 @@ module IronHide
     # @return [Array<IronHide::Rule>]
     def self.find(user, action, resource)
       cache       = IronHide.configuration.memoizer.new
-      ns_resource = "#{IronHide.configuration.namespace}::#{resource.class.name}"
+      ns_resource =
+        case IronHide.configuration.resolver
+        when :urn
+          # urn:partition:service:region:account-id:resource-type/resource-id
+          resource.urn
+        else
+          "#{IronHide.configuration.namespace}::#{resource.class.name}"
+        end
       storage.where(resource: ns_resource, action: action).map do |json|
         new(user, resource, json, cache)
       end

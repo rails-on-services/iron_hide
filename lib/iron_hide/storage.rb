@@ -8,7 +8,8 @@ module IronHide
   # @api private
   class Storage
     ADAPTERS = {
-      file: :FileAdapter
+      file: :FileAdapter,
+      cnfs_file: :CnfsFileAdapter
     }.freeze
 
     attr_reader :adapter
@@ -25,3 +26,4 @@ module IronHide
 end
 
 require 'iron_hide/storage/file_adapter'
+require 'iron_hide/storage/cnfs_file_adapter'

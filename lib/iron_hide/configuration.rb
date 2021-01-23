@@ -2,12 +2,13 @@
 
 module IronHide
   class Configuration
-    attr_accessor :adapter, :namespace, :json, :memoize
+    attr_accessor :adapter, :namespace, :json, :memoize, :resolver
 
     def initialize
-      @adapter   = :file
+      @adapter   = :cnfs_file
       @namespace = 'com::IronHide'
       @memoize   = true
+      @resolver  = :urn
     end
 
     def memoizer
