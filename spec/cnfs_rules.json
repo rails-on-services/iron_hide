@@ -1,0 +1,32 @@
+            {
+              "description": "Allow user to read, write, and list their pools",
+              "resource": "urn:perx:cognito:*:*:pool",
+              "action": ["read", "write", "list"],
+              "effect": "allow",
+              "conditions": [
+                {
+                  "equal": {
+                    "resource::id": ["user::id"]
+                  }
+                }
+              ]
+            },
+            {
+              "description": "Disallow users from writing books in languages they do not speak",
+              "resource": "urn:perx:cognito:*:*:pool",
+              "action": ["write"],
+              "effect": "deny",
+              "conditions": [
+                {
+                  "not_equal": {
+                    "resource::id": ["user::id"]
+                  }
+                }
+              ]
+            },
+            {
+              "description": "Allows users to borrow books from friendly users",
+              "resource": "urn:perx:cognito:*:*:pool",
+              "action": ["write"],
+              "effect": "allow"
+            }
